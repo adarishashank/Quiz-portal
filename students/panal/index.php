@@ -106,7 +106,7 @@ if($sesion_key==''){
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="#">Logout</a>
+                  <a class="dropdown-item" href="../logout.php">Logout</a>
                 </div>
               </li>
              
@@ -148,7 +148,7 @@ if($sesion_key==''){
                 $get_my_courses = mysqli_query($conn,"select * from student_courses where student_id='$regid';");
                 while($get_my=mysqli_fetch_assoc($get_my_courses)){
                   $course_id = $get_my['course'];
-                  $get_active_data = mysqli_query($conn,"select * from quiz_name  where start_date<='$date' and start_time<'$time' and end_time>'$time' and course_name='$course_id';");
+                  $get_active_data = mysqli_query($conn,"select * from quiz_name  where end_date <= '$date' and end_time>='$time' and end_time>'$time' and course_name='$course_id';");
                 while($data=mysqli_fetch_assoc($get_active_data)){
                   $hash = $data['hash'];
                   $quiz_name = $data['quiz_name'];
@@ -172,7 +172,7 @@ if($sesion_key==''){
                   </tr>
                   ';
                 }
-                $get_active_data = mysqli_query($conn,"select * from quiz_name  where start_date<='$date' and start_time>'$time' and course_name='$course_id';");
+                $get_active_data = mysqli_query($conn,"select * from quiz_name  where start_date<='$date' and start_time>'$time' and end_date <='$date' and end_time <='$time'  and course_name='$course_id';");
                 while($data=mysqli_fetch_assoc($get_active_data)){
                   $hash = $data['hash'];
                   $quiz_name = $data['quiz_name'];
@@ -196,7 +196,7 @@ if($sesion_key==''){
                   </tr>
                   ';
                 }
-                $get_active_data = mysqli_query($conn,"select * from quiz_name  where start_date>='$date' and end_time<'$time' and 
+                $get_active_data = mysqli_query($conn,"select * from quiz_name where where end_date <='$date' and end_time >='$time'
                 course_name='$course_id';");
                 while($data=mysqli_fetch_assoc($get_active_data)){
                   $hash = $data['hash'];

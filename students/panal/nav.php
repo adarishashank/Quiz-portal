@@ -7,7 +7,7 @@
             </a>
           </li>
           <li>
-            <a href="./create_quiz.php">
+            <a href="./result.php">
               <i class="nc-icon nc-diamond"></i>
               <p>Quiz Results</p>
             </a>

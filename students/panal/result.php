@@ -11,35 +11,7 @@ if($sesion_key==''){
   else{
     $check_hashkey = mysqli_fetch_assoc($check_hashkey);
     $regid = $check_hashkey['id'];
-    $get_hash = $_GET['key'];
-    date_default_timezone_set('Asia/Kolkata');
-    $time = date('H:i:s');
-    $date = date('Y-m-d');
-    $get_quiz_details = mysqli_query($conn,"select * from quiz_name where hash='$get_hash';");
-    $get_quiz_details = mysqli_fetch_assoc($get_quiz_details);
-    $quiz_name = $get_quiz_details['quiz_name'];
-    $course_name = get_course_name($get_quiz_details['course_name']);
-    $quesation_limit = $get_quiz_details['max_quesation'];
-    $duration = $get_quiz_details['duration'];
-    $status = mysqli_query($conn,"select * from result where id='$regid' and quiz_id='$get_hash';");
-    if(mysqli_num_rows($status)==0)
-    {
-      $selectedTime = strtotime($time);
-      $end_time = $selectedTime+(60*$duration);
-      $end_time = date("H:i:s", $end_time);
-      mysqli_query($conn,"insert into result (id,time,quiz_id,end_time) values('$regid','$time','$get_hash','$end_time');");
-    }
-    else{
-      header("Location: ../login");
-    }
   }
-}
-
-function get_course_name($a){
-  require("../conn.php");
-  $get_c = mysqli_query($conn,"select * from courses where id='$a';");
-  $get_c = mysqli_fetch_assoc($get_c);
-  return $get_c['course_name'];
 }
 ?>
 <!DOCTYPE html>
@@ -53,19 +25,6 @@ function get_course_name($a){
   <title>
   Dashboard
   </title>
-  <style>
-                .quesation_box p{
-                    padding-top: 50px;
-                }
-                .quesation_box .options{
-                  float: left;
-                  width: 100%; 
-                  height: 30px;
-                }
-                .quesation_box .options input{
-                  margin: 0px 20px 0px 20px;
-                }
-                </style>
   <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
@@ -75,12 +34,6 @@ function get_course_name($a){
   <link href="../assets/css/paper-dashboard.css?v=2.0.0" rel="stylesheet" />
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
-  <style>
-  .quesation_box{
-      font-size: 18px;
-      font-family: arial;
-  }
-  </style>
 </head>
 
 <body class="">
@@ -153,7 +106,7 @@ function get_course_name($a){
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="#">Logout</a>
+                  <a class="dropdown-item" href="../logout.php">Logout</a>
                 </div>
               </li>
              
@@ -176,119 +129,58 @@ function get_course_name($a){
               <div class="card-header ">
                 <h5 class="card-title">Quiz</h5>
                 <p class="card-category"></p>
-                <table style="width: 90%;">
+                <table style="width: 100%; height: auto;">
                 <tr>
-                <td style="padding: 5px;">Course Name : <?php echo $course_name; ?></td>
-                <td rowspan="3" style="padding: 5px; text-align: center; font-size: 20px;"><b id="count_time"></b></td>
+                <th>Id</th>
+                <th>quiz Id</th>
+                <th>Subject</th>
+                <th>attempted time</th>
+                <th>Marks</th>
                 </tr>
-                <tr>
-                <td style="padding: 5px;">Quiz Name : <?php echo $quiz_name; ?></td>
-                </tr>
-                </table>
-                
-                <div id="quiz_quesations">
-           
-              
-
-             <script>
-             var min = <?php echo $duration; ?>;var sec = 0;setInterval(function(){
-               document.getElementById("count_time").innerHTML = "Remaining Time : "+time_str(min)+":"+time_str(sec);
-               if(sec==0){sec = 59;if(min==0){submit();}min--;}sec --;},1000);function time_str(a){if(a<=9){a='0'+a;}return a;}
-             </script>
                 <?php
+                 require("../conn.php");
+                 $sesion_key = $_COOKIE["student_hash"];
+                 $get_data = mysqli_query($conn,"select * from result where id='$regid';");
+                 while($get_dat=mysqli_fetch_assoc($get_data)){
+                    $id = $get_dat['id'];
+                    $quiz_id = $get_dat['quiz_id'];
+                    $time = $get_dat['time'];
+                    $marks = $get_dat['marks'];
+                    $course_name = course_name($quiz_id);
+                    $quiz_name = quiz_name($quiz_id);
+                    echo '
+                    <tr>
+                    <td>'.$id.'</td>
+                    <td>'.$quiz_name.'</td>
+                    <td>'.$course_name.'</td>
+                    <td>Yes</td>
+                    <td>'.$marks.'</td>
+                    </tr>
+                    ';
+                 }
+                 function quiz_name($hash){
                     require("../conn.php");
-                    $sesion_key = $_COOKIE["student_hash"];
-                    if($sesion_key==''){
-                      header("Location: ../login");
-                    }else{
-                      $check_hashkey = mysqli_query($conn,"select * from studets where hashkey='$sesion_key';");
-                      if(mysqli_num_rows($check_hashkey)!=1){
-                        header("Location: ../login");
-                      }
-                      else{
-                        $get_data = mysqli_query($conn,"select * from quesations where hashkey='$get_hash' ORDER BY RAND() limit $quesation_limit;");
-                        $count = 1;
-                        while($get_details = mysqli_fetch_assoc($get_data)){
-                          $quesation = $get_details['quesation'];
-                          $quesation_id = $get_details['id'];
-                          $marks = $get_details['quesation_marks'];
-                          $option_a = $get_details['a_option'];
-                          $option_b = $get_details['b_option'];
-                          $option_c = $get_details['c_option'];
-                          $option_d = $get_details['d_option'];
-                          $type = $get_details['answer_type'];
-                          echo '<div class="quesation_box">
-                          <div style="width: 100%; height: auto;">
-                            <p id="'.$quesation_id.'" style="float: left;">'.$count.' . '.$quesation.'</p>
-                            <p style="float: right;">'.$marks.' Marks</p>
-                          </div>';
-                          if($type=='single'){
-                            echo '<div class="options">
-                            <input value="A" name="'.$count.'"  type="radio">A . '.$option_a.'</input>
-                            <input value="B" name="'.$count.'"  type="radio">B . '.$option_b.'</input>
-                            <input value="C" name="'.$count.'"  type="radio">C . '.$option_c.'</input>
-                            <input value="D" name="'.$count.'"  type="radio">D . '.$option_d.'</input>
-                          </div>
-                        </div>';
-                          }else{
-                            echo '<div class="options">
-                            <input value="A" type="checkbox">A . '.$option_a.'</input>
-                            <input value="B" type="checkbox">B . '.$option_b.'</input>
-                            <input value="C" type="checkbox">C . '.$option_c.'</input>
-                            <input value="D" type="checkbox">D . '.$option_d.'</input>
-                          </div>
-                        </div>';
-                          }
-                          $count++;
-                        }
-                      }
-                    }
+                    $quiz_name = mysqli_query($conn,"select * from quiz_name where hash='$hash';");
+                    $quiz_name = mysqli_fetch_assoc($quiz_name);
+                    $quiz_name = $quiz_name['quiz_name'];
+                    return $quiz_name;
+                 }
+                 function course_name($hash){
+                    require("../conn.php");
+                    $quiz_name = mysqli_query($conn,"select * from quiz_name where hash='$hash';");
+                    $quiz_name = mysqli_fetch_assoc($quiz_name);
+                    $quiz_name = $quiz_name['course_name'];
+                    $quiz_name = mysqli_query($conn,"select * from courses where id='$quiz_name';");
+                    $quiz_name = mysqli_fetch_assoc($quiz_name);
+                    $quiz_name = $quiz_name['course_name'];
+                    return $quiz_name;
+                 }
                 ?>
-               
-                
-                </div>
-
-
+                </table>
               </div>
-           <div style="width: 100%; height: 40px; text-align: center; margin: 40px 0px 20px 0px;">
-           <button onclick="submit();">Submit</button>
-           </div>
+           
             </div>
           </div>
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-          <script>
-          var main_data = [];
-          function submit(){
-            var data = document.getElementById("quiz_quesations");
-            for (var i=0;i<data.querySelectorAll(".quesation_box").length;i++){
-              var temp_d = {};
-              var temp = data.querySelectorAll(".quesation_box")[i];
-              var quesation = temp.querySelectorAll("div")[0];
-              temp_d["quesation"] = quesation.querySelectorAll("p")[0].id;
-              var answers = temp.querySelectorAll("div")[1];
-              answers = answers.querySelectorAll("input");
-                var temp_answers = [];
-                for(var j=0;j<answers.length;j++){
-                  if(answers[j].checked==true){
-                    temp_answers.push(answers[j].value);
-                  }
-                }
-                temp_d['answers'] = temp_answers;
-                main_data.push(temp_d);
-            }
-                $.ajax({
-                  url: "submit_quiz.php",
-                  type: "post",
-                  data: {main_data : main_data, hashkey : "<?php echo $get_hash; ?>"},
-                  success: function(d) {
-                    d=d.trim();
-                    if(d=="Ok"){
-                      location.reload();
-                    }
-                  }
-              });
-          }
-          </script>
          
         </div>
       </div>

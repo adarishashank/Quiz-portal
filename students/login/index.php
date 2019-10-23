@@ -1,5 +1,12 @@
 <?php
 require("../conn.php");
+$sesion_key = $_COOKIE["student_hash"];
+$check_hashkey = mysqli_query($conn,"select * from studets where hashkey='$sesion_key';");
+  if(mysqli_num_rows($check_hashkey)==1){
+    header("Location: ../panal");
+  }
+
+
 if(isset($_POST['login'])){
     $email = $_POST['email'];
 	$password =$_POST['pass'];
