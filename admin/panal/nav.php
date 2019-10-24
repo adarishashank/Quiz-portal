@@ -13,6 +13,12 @@
             </a>
           </li>
           <li>
+            <a href="./quiz_list.php">
+              <i class="nc-icon nc-diamond"></i>
+              <p>Quiz List</p>
+            </a>
+          </li>
+          <li>
             <a href="./students_list.php">
             <i class="nc-icon nc-single-02"></i>
               <p>Students List</p>

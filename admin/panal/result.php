@@ -8,26 +8,6 @@ if($sesion_key==''){
   if(mysqli_num_rows($check_hashkey)!=1){
     header("Location: ../login");
   }
-  else{
-    if($_GET['update_course']!=''){
-      $course_code = $_GET['update_course'];
-    $get_course_details = mysqli_query($conn,"select * from courses where course_code='$course_code';");
-    $get_course_details = mysqli_fetch_assoc($get_course_details);
-    $id = $get_course_details['id'];
-    $course_name = $get_course_details['course_name'];
-    $course_code = $get_course_details['course_code'];
-    }
-    else if(isset($_POST['update_course_button'])){
-      $id = $_POST['id'];
-      $course_name = $_POST['course_name'];
-      $course_code = $_POST['course_code'];
-      mysqli_query($conn,"update courses set course_code='$course_code',course_name='$course_name' where id='$id';");
-      header("Location: courses_list.php?couupt=1");
-    }
-    else{
-      header("Location: courses_list.php");
-    }
-  }
 }
 ?>
 <!DOCTYPE html>
@@ -50,16 +30,6 @@ if($sesion_key==''){
   <link href="../assets/css/paper-dashboard.css?v=2.0.0" rel="stylesheet" />
   <!-- CSS Just for demo purpose, don't include it in your project -->
   <link href="../assets/demo/demo.css" rel="stylesheet" />
-  <style>
-      .table_course_list{
-          width: 90%;
-          margin: auto;
-      }
-      .table_course_list tr td{
-          padding : 5px;
-      }
-      
-      </style>
 </head>
 
 <body class="">
@@ -149,34 +119,57 @@ if($sesion_key==''){
 </div> -->
       <div class="content">
      
-      <div class="row">
+        <div class="row">
           <div class="col-md-12">
-            <div class="card card-chart">
-              <div class="card-header">
-                <h5 class="card-title">Add Course</h5>
+            <div class="card ">
+              <div class="card-header ">
+                <h5 class="card-title">Quiz</h5>
+                <p class="card-category"></p>
+                <table style="width: 100%; height: auto;">
+                <tr>
+                <th>Id</th>
+                <th>Course Name</th>
+                <th>Marks</th>
+                <th>exam start time</th>
+                <th>exam end time</th>
+                </tr>
+                <?php
+                 require("../conn.php");
+                 $quiz_id = $_GET['hash'];
+                 $quiz_name = mysqli_query($conn,"select * from result where quiz_id='$quiz_id';");
+                 while($get_dat=mysqli_fetch_assoc($quiz_name)){
+                    $id = $get_dat['id'];
+                    $course_name = course_name($get_dat['quiz_id']);
+                    $marks = $get_dat['marks'];
+                    $start_time = $get_dat['time'];
+                    $end_time = $get_dat['end_time'];
+                    echo '
+                    <tr>
+                    <td>'.$id.'</td>
+                    <td>'.$course_name.'</td>
+                    <td>'.$marks.'</td>
+                    <td>'.$start_time.'</td>
+                    <td>'.$end_time.'</td>
+                    </tr>';
+                 }
+                 function course_name($hash){
+                    require("../conn.php");
+                    $quiz_name = mysqli_query($conn,"select * from quiz_name where hash='$hash';");
+                    $quiz_name = mysqli_fetch_assoc($quiz_name);
+                    $quiz_name = $quiz_name['course_name'];
+                    $quiz_name = mysqli_query($conn,"select * from courses where id='$quiz_name';");
+                    $quiz_name = mysqli_fetch_assoc($quiz_name);
+                    $quiz_name = $quiz_name['course_name'];
+                    return $quiz_name;
+                 }
+                ?>
+                </table>
               </div>
-              <hr/>
-              <fieldset style="margin: 10px;">
-              <form action="update_course.php" enctype="multipart/form-data" method="post">
-                    <legend style="font-size: 13px;">Id</legend>
-                    <input name="id" type="text" value="<?php echo $id; ?>" readonly />
-                </fieldset>
-                <fieldset style="margin: 10px;">
-                    <legend style="font-size: 13px;">Course Code</legend>
-                    <input name="course_code" value="<?php echo $course_code; ?>" type="text"/>
-                </fieldset>
-                <fieldset style="margin: 10px;">
-                    <legend style="font-size: 13px;">Course Name</legend>
-                    <input name="course_name" value="<?php echo $course_name; ?>" type="text"/>
-                </fieldset>
-                <div style="width: 100%; height: auto;">
-                <button name="update_course_button" style="margin-bottom: 10px; width: 130px; float: right; cursor: pointer; margin: 20px;">Update</button>
-    </div>
-    </form>
+           
             </div>
           </div>
+         
         </div>
-      
       </div>
       <footer class="footer footer-black  footer-white ">
         <div class="container-fluid">

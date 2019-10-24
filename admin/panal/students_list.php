@@ -12,7 +12,7 @@ if($sesion_key==''){
     if(isset($_POST['add_student'])){
       $student_name = $_POST['student_name'];
       $student_id = $_POST['student_id'];
-      mysqli_query($conn,"insert into studets (id,name) values ('$student_id','$student_name');");
+      mysqli_query($conn,"insert into studets (id,name,password) values ('$student_id','$student_name','$student_id');");
       header("Location: students_list.php?add_su=1");
     }
     if($_GET['delstu']!=''){
@@ -125,7 +125,7 @@ if($sesion_key==''){
                   </p>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="#">Logout</a>
+                  <a class="dropdown-item" href="logout.php">Logout</a>
                 </div>
               </li>
              

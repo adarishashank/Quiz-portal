@@ -88,7 +88,7 @@ if(isset($_POST['login'])){
 
 						<div>
                         <label class="label" style="color: #999999; font-size: 15px;">
-								<a href="../registration">Register</a>
+								
 							</label>
 						</div>
 					</div>
