@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 23, 2019 at 02:37 PM
+-- Generation Time: Oct 26, 2019 at 02:59 AM
 -- Server version: 5.7.27-0ubuntu0.19.04.1
 -- PHP Version: 7.2.19-0ubuntu0.19.04.2
 
@@ -41,7 +41,8 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `course_code`, `course_name`) VALUES
-(3, '15CS2201', 'Software Engineering');
+(3, '15CS2201', 'Software Engineering'),
+(4, '15CS2202', 'SE');
 
 -- --------------------------------------------------------
 
@@ -58,18 +59,17 @@ CREATE TABLE `quesations` (
   `quesation_marks` int(11) DEFAULT NULL,
   `quesation_answer` text,
   `answer_type` text,
-  `hashkey` text
+  `hashkey` text,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `quesations`
 --
 
-INSERT INTO `quesations` (`quesation`, `a_option`, `b_option`, `c_option`, `d_option`, `quesation_marks`, `quesation_answer`, `answer_type`, `hashkey`) VALUES
-('<h1> element in HTML defines ', 'Headings', 'Hyperlink', 'HyperText', 'Html-text', 5, 'A', 'single', '8c9819adca12d1e7b6ac7359a3ab5c11'),
-('Intensity of a color can be described through ', 'Hue', 'Saturation', 'Lightness', 'Grayscale', 5, 'B', 'single', '8c9819adca12d1e7b6ac7359a3ab5c11'),
-('HTML links are defined with <a> tag and address is specified by attribute ', 'hlink', 'href', 'src', 'src-link', 5, 'B', 'single', '8c9819adca12d1e7b6ac7359a3ab5c11'),
-('Testing', 'A', 'B', 'C', 'D', 10, 'B,C', 'multi', '69b3ed6c36548508589324bc024edf7e');
+INSERT INTO `quesations` (`quesation`, `a_option`, `b_option`, `c_option`, `d_option`, `quesation_marks`, `quesation_answer`, `answer_type`, `hashkey`, `id`) VALUES
+('Testing AB', 'A', 'B', 'C', 'A', 20, 'A,B', 'multi', '21c3cb9bf95a4694d1e6c27941f77c79', 5),
+('Testing A', 'A', 'B', 'C', 'D', 10, 'A', 'single', '21c3cb9bf95a4694d1e6c27941f77c79', 6);
 
 -- --------------------------------------------------------
 
@@ -94,8 +94,7 @@ CREATE TABLE `quiz_name` (
 --
 
 INSERT INTO `quiz_name` (`hash`, `quiz_name`, `course_name`, `start_time`, `start_date`, `end_date`, `end_time`, `max_quesation`, `duration`) VALUES
-('69b3ed6c36548508589324bc024edf7e', 'Testing', '3', '17:30:00', '2019-10-23', '2019-10-23', '18:00:00', 1, 20),
-('8c9819adca12d1e7b6ac7359a3ab5c11', 'HTML', '3', '02:51:00', '2019-10-23', '2019-10-23', '04:30:00', 2, 10);
+('21c3cb9bf95a4694d1e6c27941f77c79', 'Testing', '4', '02:52:00', '2019-10-26', '2019-10-26', '04:58:00', 2, 20);
 
 -- --------------------------------------------------------
 
@@ -106,8 +105,18 @@ INSERT INTO `quiz_name` (`hash`, `quiz_name`, `course_name`, `start_time`, `star
 CREATE TABLE `result` (
   `id` int(11) DEFAULT NULL,
   `marks` int(11) DEFAULT NULL,
-  `quiz_id` text
+  `quiz_id` text,
+  `time` time DEFAULT NULL,
+  `result_id` int(11) NOT NULL,
+  `end_time` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `result`
+--
+
+INSERT INTO `result` (`id`, `marks`, `quiz_id`, `time`, `result_id`, `end_time`) VALUES
+(160030462, 30, '21c3cb9bf95a4694d1e6c27941f77c79', '02:58:28', 38, '03:18:28');
 
 -- --------------------------------------------------------
 
@@ -125,7 +134,8 @@ CREATE TABLE `student_courses` (
 --
 
 INSERT INTO `student_courses` (`student_id`, `course`) VALUES
-(160030462, 3);
+(160030462, 3),
+(160030462, 4);
 
 -- --------------------------------------------------------
 
@@ -145,7 +155,27 @@ CREATE TABLE `studets` (
 --
 
 INSERT INTO `studets` (`id`, `name`, `password`, `hashkey`) VALUES
-(160030462, 'G SAI REVANTH', '160030462', 'c8c1f62129441afffc1451f9e77e2791');
+(160030462, 'G SAI REVANTH', '160030462', '0336782301486a9ea6a22c659a5dbba4');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `teacher`
+--
+
+CREATE TABLE `teacher` (
+  `email` varchar(150) NOT NULL,
+  `password` text,
+  `subject` int(11) DEFAULT NULL,
+  `hashkey` text
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `teacher`
+--
+
+INSERT INTO `teacher` (`email`, `password`, `subject`, `hashkey`) VALUES
+('gunji.sairevanth@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 3, '73c9384573f333c12acfaaa3c5060151');
 
 -- --------------------------------------------------------
 
@@ -165,7 +195,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`email`, `password`, `role`, `hashkey`) VALUES
-('gunji.sairevanth@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 'teacher', '068529cc8d7b50db6f8fe2de13f86b66');
+('gunji.sairevanth@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 'teacher', '2e9455b236e79285eb97463d28ae3e26');
 
 --
 -- Indexes for dumped tables
@@ -178,16 +208,34 @@ ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `quesations`
+--
+ALTER TABLE `quesations`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `quiz_name`
 --
 ALTER TABLE `quiz_name`
   ADD PRIMARY KEY (`hash`);
 
 --
+-- Indexes for table `result`
+--
+ALTER TABLE `result`
+  ADD PRIMARY KEY (`result_id`);
+
+--
 -- Indexes for table `studets`
 --
 ALTER TABLE `studets`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `teacher`
+--
+ALTER TABLE `teacher`
+  ADD PRIMARY KEY (`email`);
 
 --
 -- Indexes for table `users`
@@ -203,7 +251,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `quesations`
+--
+ALTER TABLE `quesations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `result`
+--
+ALTER TABLE `result`
+  MODIFY `result_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -36,5 +36,11 @@
               <p>Students Courses</p>
             </a>
           </li>
+          <li>
+            <a href="./faculty_list.php">
+            <i class="nc-icon nc-tile-56"></i>
+              <p>Faculty List</p>
+            </a>
+          </li>
         </ul>
       </div>
