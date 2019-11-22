@@ -1,4 +1,4 @@
-update mysql details in bellow files
+update mysql details in below files
 
 students/conn.php
 admin/conn.php
